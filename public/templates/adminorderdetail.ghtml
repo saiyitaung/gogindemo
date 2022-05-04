@@ -1,0 +1,35 @@
+{{template "header" .Title}}
+{{template "dashboard"}}
+<div class="container text-white">
+ <h1> Customer : {{.Data.Customer.Name}}</h1>
+ <h3> Created : {{.Data.Created | dateFmt}}</h3>
+</div>
+<table class="table table-dark">
+    <tr>
+        <th> No</th>
+        <th> Name</th>
+        <th> Price </th>
+        <th> Qty </th>
+        <th> Total </th>
+    </tr>
+    {{range $idex,$p :=.Data.Products}}
+    <tr>
+        <td>{{$idex | gIndex}} </td>
+        <td>{{$p.Name}}</td>
+        <td>{{$p.Price}}</td>
+        <td>{{$p.Qty}}</td>
+        <th>{{$p.Amount | floatFmt}}</td>
+    </tr>
+    {{end}}
+     
+    <tr>
+      <td></td>
+      <td></td>
+       <td></td>
+      <td>Total Amount</td>
+      <td>{{.Data.Amount | floatFmt}}</td>
+    <tr>
+</table>
+{{template "footerdetail"}}
+{{template "dashboardfoot"}}
+{{template "footer"}}

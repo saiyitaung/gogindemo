@@ -1,0 +1,8 @@
+{{template "header" .Title }}
+<h1> About </h1>
+<ul>
+	{{range $k,$v := .Data}}
+		<li>{{$k}} : {{$v}}</li>
+	{{end}}
+</ul>
+{{template "footer"}}

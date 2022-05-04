@@ -1,0 +1,199 @@
+{{template "header" .Title}}
+ <nav class="navbar navbar-expand-lg navbar-light bg-dark rounded" aria-label="Twelfth navbar example">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample10" aria-controls="navbarsExample10" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample10">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active text-white" aria-current="page" href="/">My Shop</a>
+            </li>
+			<li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle text-white" href="#" id="dropdown10" data-bs-toggle="dropdown" aria-expanded="false">Category</a>
+              <ul class="dropdown-menu" aria-labelledby="dropdown10">
+			  {{range .Data.Categories}}
+                <li><a class="dropdown-item" href="/{{.Name}}">{{.Name}}</a></li>
+				{{end}}
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="/cart">Cart <span class="badge bg-success" >{{.Data.Items}}</span></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+</nav>
+<div class="container">
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+		 {{range .Data.Products}}
+          <div class="col">
+            <div class="card bg-dark text-white">
+              <div class="row g-0">
+                <div class="col-md-4">
+                  <img width="100%" height="100%" src="{{.CoverPic}}" alt="Product"/>
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body">
+                    <h4 class="card-title" style="color:#198754;">{{.Name}}</h4>
+                    <p class="card-text">{{.Description}}</p>       					  
+					       
+                  </div>
+				  <div class="card-footer">
+				  <div class="d-flex justify-content-between align-items-center">
+                     <div class="btn-group">
+                        <h4 class=""> ${{.Price}}</h4>
+                          
+                     </div>               
+				     <button class="btn btn-small btn-outline-success" onclick="showdAddToCart({{.ID}},{{.Name}},{{.Description}},{{.Price}})"  type="button" data-bs-toggle="modal" data-bs-target="#exampleModalDefault">Add to Cart</button>
+					 </div>
+				 
+              </div>
+                </div>
+              </div>
+            </div>
+          </div>		
+		   {{end}}
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModalDefault" tabindex="-1" aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Detail</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h4 id="cartItemName"></h4>
+        <h5 id="cartItemPrice"></h5>        
+        <p id="cartItemDesc"></p>
+        <div class="col">
+
+           <span id="spanCount"></span>
+           <span> x </span>
+           <span id="spanPrice"></span>
+           <span> = </span>
+           <span id="spanTotal"></span>
+        </div>
+        <div class="col">
+        <h4>
+          <button onclick="decreCount()" id="decreBtn" class="btn btn-small rounded-pill btn-outline-danger">-</button>
+          <span id="cartItemCount" class="badge bg-primary"></span>
+          <button onclick="increCount()" class="btn btn-small rounded-pill btn-outline-primary">+</button>
+          </h4>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>       
+        <form action="/addtocart" method="post" id="addToCartForm" hidden>
+            <input type="text" name="productId" id="productId"/>
+            <input type="number" name="count" id="productCount"/>
+        </form>  
+        <button  class="btn btn-primary"  onclick="addToCart()" form="addToCartForm">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{template "footerdetail"}} 
+<script>
+
+function _(e){
+  return document.getElementById(e);
+}
+var _id="";
+var _name=_("cartItemName");
+var _desc=_("cartItemDesc");
+var _price=_("cartItemPrice");
+var _cartItemCount=_("cartItemCount");
+var _productId=_("productId");
+var _productCount=_("productCount");
+function allCartitems(){
+  var total =0;
+  var cookies = document.cookie.split(";");
+  for (i =0;i<cookies.length;i++){
+    var cookie=cookies[i].split("=");
+    if (cookie[0].trim().startsWith("item:")){
+      total += Number(cookie[1])
+    }
+  }
+  return total;
+}
+//var cartItems=_("cartItems");
+//cartItems.textContent=allCartitems()
+function showdAddToCart(id,name,desc,price){
+  _name.textContent=name;
+  _desc.textContent=desc;
+  _price.textContent=price;
+ // console.log(name,desc,price);
+  _cartItemCount.textContent=1;
+  _id=String(id);
+  _productId.value=id;
+  _productCount.value=1;
+  calcPrice();
+}
+function calcPrice(){
+  var n = Number(_cartItemCount.textContent);
+  var p = Number(_price.textContent);
+  _("spanCount").textContent=n;
+  _("spanPrice").textContent=p;
+  
+  _("spanTotal").textContent= n * p;
+  _productCount.value=n;
+}
+function increCount(){
+  _("decreBtn").removeAttribute("disabled","");
+  _cartItemCount.textContent = Number(_cartItemCount.textContent) + 1;
+  calcPrice();
+}
+_("decreBtn").setAttribute("disabled","");
+function decreCount(){
+  var n=Number(_cartItemCount.textContent);
+  if(n > 1){
+    _cartItemCount.textContent = n - 1;
+  }
+  if((n - 1) == 1){
+   _("decreBtn").setAttribute("disabled","");
+  }
+ calcPrice();
+}
+function addToCart(){
+   //addCookie(_id,_cartItemCount.textContent);
+   //cartItems.textContent=allCartitems()
+}
+function addCookie(key,value){
+   var v=Number(getCookie(key));
+   console.log(v)
+   if (v == 0){
+      document.cookie= "item:"+key + " = "+value;     
+   }else{      
+     document.cookie = "item:"+key + " = " + (v + Number(value));
+   }
+}
+function getCookie(key){
+var cookies=document.cookie.split(";");
+  for (i=0;i<cookies.length;i++){
+      var cookie=cookies[i].split("=");
+      console.log(cookie[0].trim().substr(5,cookie[0].length))
+      if (cookie[0].trim().substr(5,cookie[0].length) == key.trim()){
+        return cookie[1];
+      }
+  }
+  return 0;
+}
+function isExist(key){
+  var cookies=document.cookie.split(";");
+  for (i=0;i<cookies.length;i++){
+      var cookie=cookies[i].split("=");
+      if (cookie[0].trim() == key.trim()){
+        return true
+      }
+  }
+  return false
+}
+
+</script>
+{{template "footer"}}

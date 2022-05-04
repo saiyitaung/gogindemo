@@ -1,0 +1,42 @@
+{{template "header" .Title}}
+{{template "dashboard"}}
+<table class="table table-dark">
+<tr>
+    <th>ID </th>
+    <th>Qty </th>
+    <th>Price </th>
+    <th>Confirm </th>
+    <th> Created </th>
+    <th> Detail</th>
+</tr>
+{{range .Data.Orders}}
+    <tr>
+       <td>{{.ID}}</td>
+       <td>{{.NumberOfProducts}}</td>
+       <td>{{.Amount | floatFmt}}</td>
+       <td>{{.Confirm}}</td>
+       <td>{{.Created | dateFmt}}</td>
+       <td><a href="/admin/orders/{{.ID}}">Detail</a></td>
+    </tr>
+{{end}}
+</table>
+<div class="bd-example">
+        <nav aria-label="Standard pagination-lg example">
+          <ul class="pagination">
+            <li class="page-item {{if .Data.IsFirst}}disabled{{end}}">
+              <a class="page-link" href="/admin/orders?page={{.Data.Prev}}" aria-label="Previous">
+                <span aria-hidden="true">Prev</span>
+              </a>
+            </li>
+            
+            <li class="page-item {{if .Data.IsLast}}disabled{{end}}">
+              <a class="page-link" href="/admin/orders?page={{.Data.Next}}" aria-label="Next">
+                <span aria-hidden="true">Next</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        </div>
+{{template "footerdetail"}}
+{{template "dashboardfoot"}}
+{{template "footer"}}

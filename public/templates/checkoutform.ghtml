@@ -1,0 +1,72 @@
+{{template "header" .Title}}
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-dark rounded" aria-label="Twelfth navbar example">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample10" aria-controls="navbarsExample10" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample10">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active text-white" aria-current="page" href="/">My Shop</a>
+            </li>			 
+            
+          </ul>
+        </div>
+      </div>
+</nav>
+
+
+<div class="container text-white">
+    <div class="row">
+            <div class="col-md-6">
+                <h3 class="text-center"> Check out form </h3>
+                <form action="/checkout" method="POST">
+                     <div class="form-group">
+                            <label class="form-label ">Name</label>
+                            <input type="text" class="form-control bg-dark text-white" name="name" required/>
+                     </div>
+                     <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email"  class="form-control bg-dark text-white" name="email" required/>
+                     </div>
+                     <div class="form-group">
+                            <label class="form-label">Phone</label>
+                            <input type="text"  class="form-control bg-dark text-white" name="phone" required/>
+                     </div>
+                     <div class="form-group">
+                            <label class="form-label">Address</label>
+                            <textarea name="address"  class="form-control bg-dark text-white" required></textarea>
+                     </div>
+                     <hr style="opacity:0">
+                     <div class="form-group row">
+                            <div class="col-md-6">
+                            <a href="/" class="btn btn-secondary btn-lg w-100">Continue Shopping</a>
+                            </div>
+                            <div class="col-md-6">
+                            <button class="btn btn-primary btn-lg w-100" required>Submit</button>
+                            </div>
+                     </div>
+                </form>
+            </div>
+            <div class="col-md-3">
+                    <h3 class="d-flex justify-content-between"> <span>Your Cart</span> <span class="badge rounded-pill bg-secondary">{{.Data.Count}}</span></h3>
+    
+                    <ul class="list-group">
+                        {{range .Data.Cart.Items}}                   
+                        <li class="list-group-item d-flex justify-content-between bg-dark text-white">
+                        <div>
+                        <h4 style="color:#198754;"> {{.Product.Name}} </h4>
+                        <p> {{.Product.Description | shortTxt}}</p>
+                        </div>
+                        <span>${{.TotalAmount}}</span>
+                        </li>
+                        {{end}}
+                    </ul>
+                    <h4 class="d-flex justify-content-around"> <span>Total</span> <span> ${{.Data.Cart.Total}}</span> </h4>
+            </div>
+    </div>
+</div>
+{{template "footer"}}

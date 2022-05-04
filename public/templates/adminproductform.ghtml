@@ -1,0 +1,136 @@
+{{template "header" .Title}}
+{{template "dashboard"}}
+
+<div class="container text-white">
+  <div class="row">
+  <div class="col-md-6">
+   <form action="/admin/products" method="POST">
+	 <div class="col-sm-12">
+        
+              <label  class="form-label">Products</label>
+              <select class="form-select bg-dark text-white" name="cid" required>             
+                {{range .Categories}}
+                    <option value="{{.ID}}">{{.Name}}</option>
+                {{end}}
+              </select>
+              <div class="invalid-feedback">
+                Please select a valid country.
+              </div>
+      </div>
+      <div class="col-sm-12">
+       <label lass="form-label">Name</label>
+       <input type="text" class="form-control bg-dark text-white"  name="pname"  placeholder="Name" required>
+      </div>
+      <div class="col-sm-12">
+       <label lass="form-label">price</label>
+       <input type="text" class="form-control bg-dark text-white"  name="pprice"  placeholder="price" required>
+      </div>
+      <div class="col-sm-12">
+       <label lass="form-label">Qty</label>
+       <input type="number" class="form-control bg-dark text-white"  name="pqty"  placeholder="qty" required min="1">
+      </div>     
+      <div class="col-sm-12">
+          <label lass="form-label">Description</label>  
+          <textarea class="form-control bg-dark text-white" aria-label="With textarea" name="pdesc"></textarea>        
+      </div>
+     <div class="col-sm-12" hidden>
+        <select id="imgpaths" name="imgpaths" class="form-select bg-dark text-white" multiple>
+        </select>
+      </div>  
+      <hr/>
+      <div class="col-sm-12">
+         <button class="w-100 btn btn-primary" onclick="clearCookie()">New </button>
+      </div>
+     
+   </form>
+   </div>
+   <div class="col-md-6">
+        <div class="col-sm-12">
+       <label lass="form-label">Picture</label>
+       <input type="file" onchange="uploadFile()" class="form-control bg-dark text-white" id="productpic" accept=".png,.jpg,.jpeg" style="width:150px;height:150px;padding-top:60px;">
+      </div>
+      <div id="pictures">
+          
+      </div>
+   </div>
+</div>
+
+{{template "footerdetail"}}
+{{template "dashboardfoot"}}
+
+<script>
+ 
+ function _(e) {
+   return document.getElementById(e);
+ }
+ var pictures=[];
+ window.addEventListener('load',function(){
+   var cookies = document.cookie;
+   if (cookies.length > 0){
+    var imgs = cookies.split(",");
+   if(imgs.length != 0){
+     console.log(imgs);
+     for (i=0;i<imgs.length;i++){
+       pictures.push(imgs[i]);
+        appendImg(imgs[i]);
+        addImgPaths(imgs[i]);
+     }
+   }
+   }
+   
+ });
+ function uploadFile(){
+  var f=_("productpic").files[0];
+  var formdata = new FormData();
+  formdata.append("mypic",f);
+  var ajax = new XMLHttpRequest();
+  ajax.upload.addEventListener("progress",progressFunc,false);
+  ajax.addEventListener("load",completeFunc,false);
+  ajax.addEventListener("error",errorFunc,false);
+  ajax.open("POST","http://localhost:9110/admin/upload");
+  ajax.send(formdata);
+ }
+ function progressFunc(e){
+   console.log(e.loaded);
+ }
+ function completeFunc(e){
+    console.log(e.target.responseText);
+    var r=new String("http://localhost:9110/resources/imgs/")
+    var n=new String(e.target.responseText);
+    imgurl=r+n.replace(/^"(.*)"$/,'$1');
+    console.log(r.concat(n));
+    appendImg(imgurl);
+    addImgPaths(imgurl);
+    pictures.push(imgurl);
+    document.cookie=pictures.toString();
+ }
+ function addImgPaths(url){
+   var imgpaths=_("imgpaths");
+   var opt=document.createElement("option");
+   opt.value=url;
+   opt.selected=true;
+   imgpaths.appendChild(opt);
+ }
+ function appendImg(name){
+   var pics = _("pictures");
+   
+   var img =document.createElement("img");
+    img.style.width="150px";
+    img.style.height="150px";
+    img.style.margin="10px";
+    img.src=name;
+    pics.appendChild(img);
+    if (pics.children.length == 4){
+      var p=_("productpic");
+      p.setAttribute('disabled','');
+      p.setAttribute('hidden','');
+    }
+ }
+ function errorFunc(e){
+   console.log("Uploading ..Fail");
+ }
+ function clearCookie(){
+   document.cookie='';
+ }
+</script>
+{{template "footer"}}

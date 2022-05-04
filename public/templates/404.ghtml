@@ -1,0 +1,6 @@
+{{template "header" "Not Found"}}
+<div class="justify text-warning text-center">
+    <h1>404</h1>
+</div>
+{{template "footerdetail"}}
+{{template "footer"}}

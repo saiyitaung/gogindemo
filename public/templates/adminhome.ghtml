@@ -1,0 +1,169 @@
+{{template "header"}}
+{{template "dashboard"}}
+<div class="container">
+<div style="height:500px;width:500px;display:flex;">
+  <canvas id="topSales" width="100" height="100"></canvas>
+  <canvas id="categorySales" width="100" height="100"></canvas>
+</div>
+<div style="height:500px;width:500px;display:flex;">
+ <canvas id="wSales" width="100", height="100"></canvas>
+</div>
+</div>
+<!-- 
+<div class="album py-5 bg-light">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+      
+        <div class="col">
+          <div class="card shadow-sm">
+            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                </div>
+                <small class="text-muted">9 mins</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+{{template "dashboardfoot"}}
+<script src="/resources/js/chart.js"></script>
+<script>
+var ctx=document.getElementById("topSales").getContext("2d");
+var names=[];
+var data=[];
+{{range $k,$v:=.Data.ProductSales}}
+  names.push({{$k}});
+  data.push({{$v}});
+{{end}}
+var categories=[];
+var c_total=[];
+{{range $k,$v :=.Data.CategorySales}}
+   categories.push({{$k}});
+   c_total.push({{$v}});
+{{end}}
+var chart=new Chart(ctx,{
+  type:'line',
+  data:{
+    labels:names,
+    datasets:[
+      {
+        label:"sold counts",
+        data:data,
+        fill:true,
+        tension:.4,
+        backgroundColor:['rgba(102,153,255,.2)'],
+        
+      }
+    ]
+  },
+  options:{
+    scales:{
+      y:{
+        beginAtZero:true,
+      }
+    },
+    plugins:{
+      title:{
+        display:true,
+        text:"Product Sold Count",
+      },
+    },
+  }
+});
+
+var categorySales=document.getElementById("categorySales").getContext("2d");
+var ch =new Chart(categorySales,{
+  type:'bar',
+  data:{
+    labels:categories,
+    datasets:[
+      {       
+      label:'Total Amount ',
+      data:c_total,
+      backgroundColor:['rgba(102,153,255,.2)'],
+      }
+    ],
+  },
+  options:{
+    plugins:{
+      title:{
+        display:true,
+        text:"Sales Amount by Category",
+      },
+    },
+  }
+});
+
+var weekDays=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var weekData=[0,0,0,0,0,0,0];
+ {{range $k,$v := .Data.WeeklySales}}
+ console.log({{$k}}+" : "+{{$v}});
+  switch({{$k}}){
+    case 'Sun':
+    weekData[0]={{$v}};
+    break;
+    case 'Mon':
+    weekData[1]={{$v}};
+    break;
+    case 'Tue':
+    weekData[2]={{$v}};
+
+    break;
+    case 'Wed':
+    weekData[3]={{$v}};
+
+    break;
+    case 'Thu':
+    weekData[4]={{$v}};
+
+    break;
+    case 'Fri':
+    weekData[5]={{$v}};
+
+    break;
+    case 'Sat':
+    weekData[6]={{$v}};
+    break;
+  }
+{{end}}
+var wSales=document.getElementById("wSales").getContext("2d");
+var wsChart=new Chart(wSales,{
+  type:'line',
+  data:{
+    labels:weekDays,
+    datasets:[
+      {
+        label:"Sale in Day",
+        data:weekData,
+        backgroundColor:['rgba(102,153,255,.2)'],
+        borderColor:['green'],
+        borderWidth:.5,
+        tension:.4,
+      },
+    ],
+  },
+  options:{
+    scales:{
+      y:{
+        beginAtZero:true,
+      }
+    },
+    plugins:{
+    title:{
+      display:true,
+      text:'Sales in Week',
+    },
+  },
+  }
+});
+</script>
+{{template "footer"}}

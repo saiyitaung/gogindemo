@@ -1,0 +1,42 @@
+{{template "header" .Title}}
+{{template "dashboard"}}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2 text-white">Products</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+           
+          <a class="btn btn-lg btn-primary" href="/admin/products/new">
+            New           
+          </a>
+        </div>
+</div>
+<div class="album py-5">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-6 g-6">
+     	{{range .Data}}
+        <div class="col">
+          <div class="card shadow-sm">
+           <img src="{{.CoverPic}}" width="100%" height="150" style="border-radius:.4rem .4rem 0 0;"/>
+            <div class="card-body">
+               <div class="d-flex justify-content-between align-items-center">
+               <h5>{{.Name}}</h5>
+               <p class="text-muted">{{.Price}}</p>
+               </div>
+              <p class="card-text">{{.Description | shortTxt}}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                 <div class="btn-group">
+                <!--  <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button> -->
+                </div>  
+                <a href="#"class="text-muted">Edit</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{end}}
+      </div>
+    </div>
+  </div>
+{{template "footerdetail"}}
+{{template "dashboardfoot"}}
+{{template "footer"}}

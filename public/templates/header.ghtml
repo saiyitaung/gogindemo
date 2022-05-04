@@ -1,0 +1,10 @@
+{{define "header"}}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{.}} </title>
+  <link href="/resources/css/bootstrap.min.css" rel="stylesheet"/>
+ 
+</head>
+<body class="bg-dark">
+{{end}}

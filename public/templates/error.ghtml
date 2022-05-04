@@ -1,0 +1,12 @@
+{{template "header"}}
+<div class="container justify text-center text-white">
+    <h2 class="danger">OOP!</h2>
+    <p>{{.ErrMsg}}</p>
+    <button class="btn btn-outline-primary btn-lg " onclick="goBack()">Back</button>
+</div>
+<script>
+    function goBack(){
+        history.back()
+    }
+</script>
+{{template "footer"}}

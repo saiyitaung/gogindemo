@@ -1,0 +1,113 @@
+{{template "header" .Title}}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-dark rounded" aria-label="Twelfth navbar example">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample10" aria-controls="navbarsExample10" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample10">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active text-white" aria-current="page" href="/">My Shop</a>
+            </li>			 
+            
+          </ul>
+        </div>
+      </div>
+</nav>
+
+
+
+
+<div class="container text-white">
+    <h3>Cart Page </h3>
+ 
+<table class="table table-dark" id="tableID">
+<tr>
+    <td></td>
+    <th>Name</th>
+    <th>Price </th>
+    <th>Count </th>
+    <th>Amount </th>
+<tr>
+{{range .Data.Items}}
+
+    <tr>
+       <td><img src="{{.Product.CoverPic}}" width="100" height="100"/></td>
+        <td>{{.Product.Name}}</td>
+        <td>{{.Product.Price}}</td>
+        <td><h4><button class="btn btn-small rounded-pill btn-outline-danger " form="removeitemForm" onclick="setRemoveItem({{.Product.ID}},1)">-</button>  <span class="badge bg-success rounded-pill">{{.Count}} </span>  <button class="btn btn-small rounded-pill btn-outline-secondary" onclick="setAddItem({{.Product.ID}},1)" form="additemForm">+</button></h4></td>
+        <td>${{.TotalAmount}}</td>
+
+    </tr>
+{{end}}
+<tr>
+    <td colspan="3"></td>
+    <td>Total</td>
+    <td>${{.Data.Total}}</td>
+</tr>
+ <tr>
+    <td colspan="3"></td>
+    <td><a href="/" class="btn btn-outline-primary">continue shopping</a></td>
+    {{if .Data.Items}}
+    <td ><a href="/checkout" class="btn btn-outline-success">Check out</a></td>
+    {{end}}
+ <tr>
+</table>
+<form action="/removecartitem" method="POST" id="removeitemForm" hidden>
+    <input type="text" name="productId" id="removepId"/>
+    <input type="number" name="count" id="removecount"/>
+</form>
+<form action="/updatcartitem" method="POST" id="additemForm" hidden>
+    <input type="text" name="productId" id="addpId"/>
+    <input type="number" name="count" id="addcount"/>
+</form>
+</div>
+<script>
+ var m={};
+ var products=[];
+function getCartItems(){   
+    var cookies=document.cookie.split(";");
+    for (i=0;i<cookies.length;i++){
+         var cookie=cookies[i].split("=");
+         if (cookie[0].trim().startsWith("item:")){             
+             var id=cookie[0].trim().substr(5,cookie[0].length);
+             var v=cookie[1];
+             reqProduct(id);
+             m[id]=Number(v);
+         }
+    }   
+    console.log(products[1].name);
+}
+function reqProduct(id){
+    var ajax=new XMLHttpRequest();
+    ajax.open("GET","http://localhost:9110/api/products/"+id);
+    ajax.addEventListener("load",function(e){
+       // console.log(e.target.responseText);
+        products.push(JSON.parse(e.target.responseText));
+    });
+    ajax.addEventListener("error",function(e){
+        console.log("on error");
+        return "error"
+    });
+    ajax.send();
+}
+// getCartItems();
+ console.log(m);
+
+ function _(e){
+     return document.getElementById(e);
+ }
+ function setRemoveItem(id,count){
+     _("removepId").value=id;
+     _("removecount").value=Number(count);
+     console.log(id,count)
+ }
+ function setAddItem(id,count){
+     _("addpId").value=id;
+     _("addcount").value=Number(count);
+     console.log("add "+id+ " : "+count);
+ }
+</script>
+{{template "footer"}}
